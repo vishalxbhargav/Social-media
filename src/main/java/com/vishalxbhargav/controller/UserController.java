@@ -57,6 +57,7 @@ public class UserController {
 			return new ResponseEntity<>(user, HttpStatus.OK);
 
 		} catch (Exception e) {
+			
 			throw new RuntimeException(e);
 		}
 	}
