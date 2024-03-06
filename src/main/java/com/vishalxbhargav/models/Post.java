@@ -17,10 +17,11 @@ public class Post {
     private String caption;
     private String image;
     private String video;
-    @JsonIgnore
     @ManyToOne
     private User user;
     @OneToMany
     private List<User> liked=new ArrayList<>();
+    @OneToMany
+    private List<Comment> Comments=new ArrayList<>();
     private LocalDateTime createdAt;
 }

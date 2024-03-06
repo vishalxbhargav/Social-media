@@ -32,25 +32,26 @@ public class UserServiceImplementaion implements UserService {
     }
 
     @Override
-    public User followUser(Integer userId1, Integer userId2) throws Exception {
-        User user1=findUserById(userId1);
+    public User followUser(Integer reqUserId, Integer userId2) throws Exception {
+        User reqUser=findUserById(reqUserId);
         User user2=findUserById(userId2);
 
-        user2.getFollowers().add(user1.getId());
-        user1.getFollowing().add(user2.getId());
-        userRepository.save(user1);
+        user2.getFollowers().add(reqUser.getId());
+        reqUser.getFollowing().add(user2.getId());
+        userRepository.save(reqUser);
         userRepository.save(user2);
-        return user1;
+        return reqUser;
     }
 
     @Override
     public User updateUser(User user,Integer id) throws Exception {
         User oldUser=findUserById(id);
-        if(user.getFirstName().isEmpty()) user.setFirstName(oldUser.getFirstName());
-        if(user.getLastName().isEmpty()) user.setLastName(oldUser.getLastName());
-        if(user.getEmail().isEmpty()) user.setEmail(oldUser.getEmail());
-        registeruser(user);
-        return user;
+        if(!user.getFirstName().isEmpty()) oldUser.setFirstName(user.getFirstName());
+        if(!user.getLastName().isEmpty()) oldUser.setLastName(user.getLastName());
+        if(!user.getEmail().isEmpty()) oldUser.setEmail(user.getEmail());
+        if(!user.getGender().isEmpty()) oldUser.setGender(user.getGender());
+        registeruser(oldUser);
+        return oldUser;
     }
     @Override
     public List<User> searchUserList(String query) {

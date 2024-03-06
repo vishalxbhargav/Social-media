@@ -21,7 +21,7 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	@GetMapping("api/user/id/{id}")
+	@GetMapping("user/id/{id}")
 	public User getUser(@PathVariable Integer id) throws Exception {
 		return userService.findUserById(id);
 	}
@@ -29,11 +29,12 @@ public class UserController {
 	public List<User> getAllUser(){
 		return userRepository.findAll();
 	}
-	@PutMapping("api/user/id/{id}")
-	public User updateUser(@RequestBody User user,@PathVariable Integer id) throws Exception {
-		return userService.updateUser(user,id);
+	@PutMapping("api/users")
+	public User updateUser(@RequestHeader("Authorization") String token,@RequestBody User user) throws Exception {
+		User newUser=userService.getUserByJwtToken(token);
+		return userService.updateUser(user, newUser.getId());
 	}
-	@GetMapping("api/user/email/{email}")
+	@GetMapping("user/email/{email}")
 	public User getByEmail(@PathVariable String email){
 		return userService.findUserByEmail(email);
 	}
@@ -42,9 +43,10 @@ public class UserController {
         userRepository.deleteById(id);
     }
 
-	@PutMapping("api/user/follow/{user1}/{user2}")
-	public User followingHandler(@PathVariable Integer user1,@PathVariable Integer user2) throws Exception {
-		return userService.followUser(user1,user2);
+	@PutMapping("api/user/follow/{user2}")
+	public User followingHandler(@RequestHeader("Authorization") String token,@PathVariable Integer user2) throws Exception {
+		User reqUser=userService.getUserByJwtToken(token);
+		return userService.followUser(reqUser.getId(), user2);
 	}
 	@GetMapping("search")
 	public  List<User> searchUsers(@RequestParam String query){
@@ -57,7 +59,7 @@ public class UserController {
 			return new ResponseEntity<>(user, HttpStatus.OK);
 
 		} catch (Exception e) {
-			
+
 			throw new RuntimeException(e);
 		}
 	}
